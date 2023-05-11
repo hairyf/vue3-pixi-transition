@@ -17,7 +17,7 @@
 > !Before using this framework, you need to install [https://github.com/hairyf/vue3-pixi-renderer](vue3-pixi-renderer)
 
 
-> developing...
+> under development...
 
 ## Try it Online
 
