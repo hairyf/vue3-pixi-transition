@@ -1,21 +1,22 @@
 {
-  "name": "vue3-pixi-renderer",
+  "name": "vue3-pixi-transition",
   "type": "module",
   "version": "0.5.7",
   "packageManager": "pnpm@8.5.0",
   "description": "Register global imports on demand for Vite and Webpack",
   "license": "MIT",
-  "homepage": "https://github.com/hairyf/vue3-pixi-renderer#readme",
+  "homepage": "https://github.com/hairyf/vue3-pixi-transition#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hairyf/vue3-pixi-renderer.git"
+    "url": "git+https://github.com/hairyf/vue3-pixi-transition.git"
   },
   "bugs": {
-    "url": "https://github.com/hairyf/vue3-pixi-renderer/issues"
+    "url": "https://github.com/hairyf/vue3-pixi-transition/issues"
   },
   "keywords": [
     "pixi.js",
-    "vue"
+    "vue",
+    "transition"
   ],
   "exports": {
     ".": {
@@ -61,16 +62,12 @@
   },
   "dependencies": {
     "@antfu/utils": "^0.7.2",
-    "@vueuse/core": "^10.1.2",
-    "gsap": "^3.11.5",
-    "nanoid": "^4.0.2",
     "pixi.js": "^7.2.4",
-    "vue-demi": "^0.14.0"
+    "vue-demi": "^0.14.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.33.1",
     "@types/node": "^18.11.13",
-    "@vue/runtime-core": "^3",
     "bumpp": "^9.0.0",
     "eslint": "^8.29.0",
     "tsup": "^6.7.0",
