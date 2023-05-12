@@ -2,7 +2,6 @@ import type { TransitionVars } from '../types'
 
 export const pointKeys = [
   'pivot',
-  'blur',
   'anchor',
   'position',
   'scale',
