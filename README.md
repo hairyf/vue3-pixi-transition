@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/pixi-v7+-ff69b4.svg?style=flat-square" alt="pixi version" />
 </p>
 
-> !Before using this framework, you need to install [https://github.com/hairyf/vue3-pixi-renderer](https://github.com/hairyf/vue3-pixi-renderer)
+> !Before using this framework, you need to install [vue3-pixi-renderer](https://github.com/hairyf/vue3-pixi-renderer)
 
 <br>
 <p align="center">
