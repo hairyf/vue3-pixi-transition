@@ -25,7 +25,7 @@ function typewriter(el: Text) {
     :enter="typewriter"
     :leave="typewriter"
   >
-    <Text v-if="show" :position="150" :style="{ fill: '#fff' }">
+    <Text v-if="show" :position="150">
       The quick brown fox jumps over the lazy dog
     </Text>
   </PTransition>

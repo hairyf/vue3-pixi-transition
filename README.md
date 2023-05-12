@@ -198,6 +198,38 @@ function typewriter(el: Text) {
 </template>
 ```
 
+## Filters
+
+You can also control the transition effects of filters by setting `before-enter`, `enter`, `before-leave`, `leave`, `...` to options or function:
+
+```html
+<script setup lang="ts">
+import { PTransition } from "vue3-pixi-transition";
+import { Container, Sprite } from 'pixi.js'
+function onBeforeEnter(el: Container) {}
+function onEnter(el: Container, done: Function) {}
+function onLeave(el: Container, done: Function) {}
+// ....
+const show = ref(true)
+</script>
+<template>
+  <PTransition
+    :duration="{ enter: 1000, leave: 700 }"
+    :before-enter="{ alpha: 0 }"
+    :enter="{ alpha: 1 }"
+    :leave="{ alpha: 0 }"
+  >
+    <sprite v-if="show" texture="...">
+      <blur-filter
+        :before-enter="{ strength: 10, blur: 80 }"
+        :enter="{ strength: 0, blur: 0 }"
+        :leave="{ blur: 80 }"
+        :strength="0"
+      />
+    </sprite>
+  </PTransition>
+```
+
 ## License
 
 [MIT](./LICENSE) License © 2022-PRESENT [hairyf](https://github.com/hairyf)
