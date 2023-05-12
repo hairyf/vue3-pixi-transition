@@ -230,6 +230,36 @@ const show = ref(true)
   </PTransition>
 ```
 
+## Transition Group
+
+`vue3-pixi-transition` also supports the transition effects of Pixi objects in the `v-for` loop:
+
+```html
+
+<script setup lang="ts">
+import { PTransitionGroup } from "vue3-pixi-transition";
+import { Container, Sprite } from 'pixi.js'
+
+const items = ref([
+  { texture: '...' },
+  { texture: '...' },
+  { texture: '...' },
+])
+// ....
+const show = ref(true)
+</script>
+<template>
+  <PTransitionGroup
+    :duration="{ enter: 1000, leave: 700 }"
+    :before-enter="{ alpha: 0 }"
+    :enter="{ alpha: 1 }"
+    :leave="{ alpha: 0 }"
+  >
+    <sprite v-for="(item, index) in items" :key="index" texture="..." />
+  </PTransitionGroup>
+</template>
+```
+
 ## License
 
 [MIT](./LICENSE) License © 2022-PRESENT [hairyf](https://github.com/hairyf)

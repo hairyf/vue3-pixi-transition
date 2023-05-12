@@ -44,7 +44,7 @@ function onLeave(el: Container, done: () => void) {
     pixi: {
       scaleX: 1,
       scaleY: 1,
-      x: 300,
+      x: 350,
     },
     ease: 'elastic.inOut(2.5, 1)',
   })
