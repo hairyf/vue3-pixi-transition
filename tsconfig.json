@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "esnext",
+    "jsx": "preserve",
     "lib": ["esnext", "DOM"],
     "moduleResolution": "node",
     "esModuleInterop": true,

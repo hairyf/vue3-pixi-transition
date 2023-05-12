@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 
 import BasicTransition from './components/BasicTransition.vue'
+import FieldTransition from './components/FieldTransition.vue'
+import TickerTransition from './components/TickerTransition.vue'
 
 const enabled = ref(true)
 
@@ -23,7 +25,7 @@ const { width, height } = useWindowSize()
       :height="height"
     >
       <template v-if="enabled">
-        <BasicTransition />
+        <TickerTransition />
       </template>
     </Stage>
   </div>

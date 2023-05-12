@@ -8,7 +8,8 @@
     "gsap": "^3.11.5",
     "pixi-filters": "^5.2.1",
     "vue": "^3.2.47",
-    "vue3-pixi-renderer": "^0.5.7"
+    "vue3-pixi-renderer": "^0.5.7",
+    "vue3-pixi-transition": "workspace:^"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.1",

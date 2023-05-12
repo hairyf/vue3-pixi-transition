@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { Container } from 'pixi.js'
+import { Container, Text } from 'pixi.js'
 import type { Graphics as GraphicsIns } from 'pixi.js'
-import gsap, { Elastic } from 'gsap'
+import { Transition } from 'vue3-pixi-transition'
+import gsap from 'gsap'
 import PixiPlugin from 'gsap/PixiPlugin'
 import { nextTick, ref } from 'vue'
 import * as PIXI from 'pixi.js'
@@ -11,7 +12,7 @@ PixiPlugin.registerPIXI(PIXI)
 
 // 在元素被插入到 DOM 之前被调用
 // 用这个来设置元素的 "enter-from" 状态
-async function onBeforeEnter(el: Container) {
+async function onBeforeEnter(el: Text) {
   await nextTick()
   gsap.set(el, {
     pixi: {
@@ -37,7 +38,7 @@ function onEnter(el: Container, done: () => void) {
 
   return {
     duration: 1000,
-    tick: (t) => {
+    tick: (t: any) => {
 
     },
   }
@@ -92,19 +93,6 @@ const show = ref(true)
       @leave-cancelled="onLeaveCancelled"
     >
       <graphics v-if="show" :scale="1" :pivot="30" :x="200" :y="60" @draw="onDrawRounded" />
-    </Transition>
-
-    <Transition
-      :duration="{ enter: 1000, leave: 700 }"
-      :before-enter="{ alpha: 0, scaleX: 0, scaleY: 0 }"
-      :enter="{ ease: 'elastic.inOut(2.5, 1)', delay: 0, alpha: 1 }"
-      :before-leave="{}"
-      :leave="[
-        { ease: 'elastic.inOut(2.5, 1)', scaleX: 1, scaleY: 1 },
-        { delay: 0.5, alpha: 0 },
-      ]"
-    >
-      -
     </Transition>
   </Container>
 </template>
