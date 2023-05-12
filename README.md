@@ -16,7 +16,7 @@
 
 <br>
 <p align="center">
-  <img style="height: 300px" src="public/image.gif" />
+  <img style="max-width: 530px" src="public/image.gif" />
 </p>
 
 ## Try it Online
