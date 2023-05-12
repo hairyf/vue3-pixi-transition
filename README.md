@@ -9,7 +9,6 @@
 <p align="center">
   <img src="https://img.shields.io/github/forks/hairyf/vue3-pixi-transition.svg?style=flat-square" />
   <img src="https://img.shields.io/github/stars/hairyf/vue3-pixi-transition.svg?style=flat-square" />
-  <img src="https://img.shields.io/npm/dm/vue3-pixi-transition.svg?style=flat-square" />
   <img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat-square" alt="license" />
   <img src="https://img.shields.io/badge/pixi-v7+-ff69b4.svg?style=flat-square" alt="pixi version" />
 </p>
