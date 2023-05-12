@@ -91,13 +91,13 @@ import { PTransition } from "vue3-pixi-transition";
 
 > The `delay` and `duration` are used to individually control the delay and duration of each animation node (the `item-duration` uses the `duration` property by default).
 
-## Custom Ease
+## Ease Presets
 
 By default, all transition effects are linear. You can customize the transition easing by using custom cubic-bezier curves.
 
 ```html
 <script setup lang="ts">
-import { PTransition } from "vue3-pixi-transition";
+import { PTransition, EasePresets } from "vue3-pixi-transition";
 </script>
 
 <template>
@@ -178,16 +178,16 @@ import { Transition } from "vue3-pixi-transition";
 import { Text } from 'pixi.js'
 function typewriter(el: Text) {
   const speed = 1
-	const text = el.text;
-	const duration = text.length / (speed * 0.01);
+  const text = el.text;
+  const duration = text.length / (speed * 0.01);
   function tick(t: number) {
-		const i = ~~(text.length * t);
-		el.text = text.slice(0, i);
+    const i = ~~(text.length * t);
+    el.text = text.slice(0, i);
   }
-	return {
-		duration,
-		tick
-	};
+   return {
+     duration,
+     tick
+   };
 }
 </script>
 
