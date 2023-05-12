@@ -22,6 +22,7 @@ const { width, height } = useWindowSize()
       :style="{ width: `${width / 2}px` }"
       :width="width - 80"
       :height="height"
+      background="#fff"
     >
       <Basic :show="enabled" />
       <Fields :show="enabled" />

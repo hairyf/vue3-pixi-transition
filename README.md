@@ -14,14 +14,16 @@
   <img src="https://img.shields.io/badge/pixi-v7+-ff69b4.svg?style=flat-square" alt="pixi version" />
 </p>
 
-> !Before using this framework, you need to install [https://github.com/hairyf/vue3-pixi-renderer](vue3-pixi-renderer)
+> !Before using this framework, you need to install [https://github.com/hairyf/vue3-pixi-renderer](https://github.com/hairyf/vue3-pixi-renderer)
 
-
-> under development...
+<br>
+<p align="center">
+  <img style="height: 300px" src="public/image.gif" />
+</p>
 
 ## Try it Online
 
-> TODO
+[![StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/vue-pixi-transition)
 
 ## Install
 
@@ -89,9 +91,58 @@ import { PTransition } from "vue3-pixi-transition";
 
 > The `delay` and `duration` are used to individually control the delay and duration of each animation node (the `item-duration` uses the `duration` property by default).
 
-## Transition Ease
+## Custom Ease
 
 By default, all transition effects are linear. You can customize the transition easing by using custom cubic-bezier curves.
+
+```html
+<script setup lang="ts">
+import { PTransition } from "vue3-pixi-transition";
+</script>
+
+<template>
+  <PTransition
+    :before-enter="{ x: -50 }"
+    :enter="{ ease: [.42, 0, 1, 1], x: 0 }"
+    :level="[
+      { ease: EasePresets.easeInQuart, x: -50 },
+      { delay: 500, alpha: 0 },
+    ]"
+  >
+    <!-- ... -->
+  </PTransition>
+</template>
+```
+
+The following transitions are available via the `TransitionPresets` constant.
+
+- [`linear`](https://cubic-bezier.com/#0,0,1,1)
+- [`easeInSine`](https://cubic-bezier.com/#.12,0,.39,0)
+- [`easeOutSine`](https://cubic-bezier.com/#.61,1,.88,1)
+- [`easeInOutSine`](https://cubic-bezier.com/#.37,0,.63,1)
+- [`easeInQuad`](https://cubic-bezier.com/#.11,0,.5,0)
+- [`easeOutQuad`](https://cubic-bezier.com/#.5,1,.89,1)
+- [`easeInOutQuad`](https://cubic-bezier.com/#.45,0,.55,1)
+- [`easeInCubic`](https://cubic-bezier.com/#.32,0,.67,0)
+- [`easeOutCubic`](https://cubic-bezier.com/#.33,1,.68,1)
+- [`easeInOutCubic`](https://cubic-bezier.com/#.65,0,.35,1)
+- [`easeInQuart`](https://cubic-bezier.com/#.5,0,.75,0)
+- [`easeOutQuart`](https://cubic-bezier.com/#.25,1,.5,1)
+- [`easeInOutQuart`](https://cubic-bezier.com/#.76,0,.24,1)
+- [`easeInQuint`](https://cubic-bezier.com/#.64,0,.78,0)
+- [`easeOutQuint`](https://cubic-bezier.com/#.22,1,.36,1)
+- [`easeInOutQuint`](https://cubic-bezier.com/#.83,0,.17,1)
+- [`easeInExpo`](https://cubic-bezier.com/#.7,0,.84,0)
+- [`easeOutExpo`](https://cubic-bezier.com/#.16,1,.3,1)
+- [`easeInOutExpo`](https://cubic-bezier.com/#.87,0,.13,1)
+- [`easeInCirc`](https://cubic-bezier.com/#.55,0,1,.45)
+- [`easeOutCirc`](https://cubic-bezier.com/#0,.55,.45,1)
+- [`easeInOutCirc`](https://cubic-bezier.com/#.85,0,.15,1)
+- [`easeInBack`](https://cubic-bezier.com/#.36,0,.66,-.56)
+- [`easeOutBack`](https://cubic-bezier.com/#.34,1.56,.64,1)
+- [`easeInOutBack`](https://cubic-bezier.com/#.68,-.6,.32,1.6)
+
+For more complex transitions, a custom function can be provided.
 
 ```html
 <script setup lang="ts">
@@ -102,21 +153,22 @@ function easeOutElastic(n: number) {
       ? 1
       : (2 ** (-10 * n)) * Math.sin((n * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1
 }
-
 </script>
 
 <template>
   <PTransition
-    :before-enter="{ x: -50 }"
-    :enter="{ ease: [.42, 0, 1, 1], x: 0 }"
-    :level="{ ease: easeOutElastic, x: -50 }"
+    :before-enter="{ alpha: 0, x: -50 }"
+    :enter="{ alpha: 1, x: 0 }"
+    :level="[
+      { ease: easeOutElastic, x: 50 },
+      { delay: 500, alpha: 0 },
+    ]"
   >
     <!-- ... -->
   </PTransition>
 </template>
 ```
-
-## Transition Custom
+## Custom Transition
 
 You can also control the transition effects by setting `enter` and `level` to functions:
 

@@ -26,18 +26,18 @@ function easeOutElastic(n: number) {
       scaleY: 0.25,
     }"
     :enter="{
-      ease: [.17, .67, .01, -1.42],
+      ease: EasePresets.easeInCubic,
       alpha: 1,
       scaleX: 1,
       scaleY: 1,
     }"
     :leave="[
-      { ease: easeOutElastic, x: 300 },
+      { ease: easeOutElastic, x: 600 },
       { delay: 500, alpha: 0 },
     ]"
     @before-enter="() => 1231"
   >
-    <graphics v-if="show" :scale="1" :pivot="30" :x="200" :y="60" @draw="onDrawRounded" />
+    <graphics v-if="show" :scale="1" :pivot="30" :x="500" :y="60" @draw="onDrawRounded" />
   </PTransition>
 </template>
 
