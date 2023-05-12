@@ -1,7 +1,8 @@
-import type { FunctionalComponent } from 'vue-demi'
-import { BaseTransition, h } from 'vue-demi'
+import type { PropType } from 'vue-demi'
+import { BaseTransition, defineComponent, h, reactive } from 'vue-demi'
 
 import { isFunction, toArray } from '@antfu/utils'
+import type { Container } from 'pixi.js'
 import type { Fn, Hook, TransitionTicker, TransitionVars } from './types'
 import {
   createDeferred,
@@ -11,7 +12,6 @@ import {
   lerp,
   linear,
   normalizeDuration,
-  resolveProps,
   setProps,
   setValue,
 } from './utils'
@@ -40,56 +40,72 @@ export interface TransitionProps {
   appear?: boolean
 }
 
-export const PixiTransition: FunctionalComponent<TransitionProps> = (props, { slots }) =>
-  h(BaseTransition, resolveTransitionProps(props), slots)
+export const PTransition = defineComponent({
+  name: 'PTransition',
+  props: {
+    duration: [Number, Object] as PropType<number | { enter: number;leave: number }>,
+    beforeEnter: [Function, Object, Array] as PropType<Hook<(el: any) => void>>,
+    enter: [Function, Object, Array] as PropType< Hook<(el: any, done: Fn) => TransitionTicker | void>>,
+    afterEnter: [Function, Object, Array] as PropType<Hook<(el: any) => void>>,
+    enterCancelled: [Function, Object, Array] as PropType< Hook<(el: any) => void>>,
+    beforeLeave: [Function, Object, Array] as PropType< Hook<(el: any) => void>>,
+    leave: [Function, Object, Array] as PropType< Hook<(el: any, done: Fn) => TransitionTicker | void>>,
+    afterLeave: [Function, Object, Array] as PropType< Hook<(el: any) => void>>,
+    onBeforeEnter: Function as PropType<(el: any) => void>,
+    onEnter: Function as PropType<(el: any, done: Fn) => void>,
+    onAfterEnter: Function as PropType<(el: any) => void>,
+    onEnterCancelled: Function as PropType<(el: any) => void>,
+    onBeforeLeave: Function as PropType<(el: any) => void>,
+    onLeave: Function as PropType<(el: any, done: Fn) => void>,
+    onAfterLeave: Function as PropType<(el: any) => void>,
+    appear: Boolean,
+  },
 
-export function resolveTransitionProps(rawProps: TransitionProps) {
-  rawProps = resolveProps(rawProps)
-  const ids = { enter: 0, leave: 0, time: 0 }
+  setup(props, { slots, emit }) {
+    const context = reactive({ id: 0, time: 0 })
+    function onBeforeEnter(el: any) {
+      callSetterHook(el, props, 'beforeEnter')
+    }
+    function onEnter(el: any, done: Fn) {
+      callAnimationHook(el, props, 'enter', { done, context })
+    }
+    function onAfterEnter(el: any) {
+      callSetterHook(el, props, 'afterEnter')
+    }
+    function onEnterCancelled(el: any) {
+      callSetterHook(el, props, 'afterEnter')
+    }
+    function onBeforeLeave(el: any) {
+      callSetterHook(el, props, 'beforeLeave')
+    }
+    async function onLeave(el: any, done: Fn) {
+      callAnimationHook(el, props, 'leave', { done, context })
+    }
+    function onAfterLeave(el: any) {
+      emit('afterLeave', el)
+      callSetterHook(el, props, 'afterLeave')
+    }
 
-  function onBeforeEnter(el: any) {
-    callSetterHook(el, rawProps, 'beforeEnter')
-  }
-  function onEnter(el: any, done: Fn) {
-    callAnimationHook(el, rawProps, 'enter', { done, ids })
-  }
-  function onAfterEnter(el: any) {
-    callSetterHook(el, rawProps, 'afterEnter')
-  }
-  function onEnterCancelled(el: any) {
-    callSetterHook(el, rawProps, 'afterEnter')
-  }
-  function onBeforeLeave(el: any) {
-    callSetterHook(el, rawProps, 'beforeLeave')
-  }
-  async function onLeave(el: any, done: Fn) {
-    callAnimationHook(el, rawProps, 'leave', { done, ids })
-  }
-  function onAfterLeave(el: any) {
-    callSetterHook(el, rawProps, 'afterLeave')
-  }
-
-  return {
-    css: false,
-    onBeforeEnter,
-    onEnter,
-    onAfterEnter,
-    onEnterCancelled,
-    onBeforeLeave,
-    onLeave,
-    onAfterLeave,
-  }
-}
-
-PixiTransition.displayName = 'PixiTransition'
+    return () => h(BaseTransition, {
+      css: false,
+      onBeforeEnter,
+      onEnter,
+      onAfterEnter,
+      onEnterCancelled,
+      onBeforeLeave,
+      onLeave,
+      onAfterLeave,
+    }, slots)
+  },
+})
 
 interface TransitionOptions {
-  ids: Record<string, number>
+  context: Record<string, number>
   done: Fn
 }
 
 async function callSetterHook(instance: any, props: any, name: string) {
-  const eventName = `on${name.charAt(1).toLocaleUpperCase()}${name.slice(1)}`
+  const eventName = `on${name[0].toLocaleUpperCase()}${name.slice(1)}`
   const hook = props[name] || props[eventName]
   if (!hook)
     return
@@ -101,20 +117,20 @@ async function callSetterHook(instance: any, props: any, name: string) {
 }
 
 async function callAnimationHook(instance: any, props: any, name: string, options: TransitionOptions) {
-  const eventName = `on${name.charAt(1).toLocaleUpperCase()}${name.slice(1)}`
+  const eventName = `on${name[0].toLocaleUpperCase()}${name.slice(1)}`
   const hook = props[name] || props[eventName]
 
   if (!hook)
     return
 
-  const { done, ids } = options
-  const id = ++ids[name]
-  const abort = () => id !== ids[name]
+  const { done, context } = options
+  const id = ++context.id
+  const abort = () => id !== context.id
 
   if (isFunction(hook)) {
     return name === 'enter'
-      ? executeInTicker(hook(instance, done), done, abort, ids)
-      : executeOutTicker(hook(instance, done), done, abort, ids)
+      ? executeInTicker(hook(instance, done), done, abort, context)
+      : executeOutTicker(hook(instance, done), done, abort, context)
   }
 
   const transitions = toArray(hook).filter(Boolean)
@@ -132,7 +148,7 @@ async function callAnimationHook(instance: any, props: any, name: string, option
   done()
 }
 
-async function executeTransition(instance: any, duration: number, transition: TransitionVars, abort?: Fn) {
+async function executeTransition(instance: Container, duration: number, transition: TransitionVars, abort?: Fn) {
   if (transition.delay)
     await delay(transition.delay)
   const optionsKeys = ['delay', 'duration', 'ease']
@@ -144,7 +160,6 @@ async function executeTransition(instance: any, duration: number, transition: Tr
   const ease = !isFunction(transition.ease)
     ? createEasingFunction(transition.ease)
     : transition.ease
-
   function exec(key: string) {
     const from = getValue(instance, key)
     const to = transition[key]
@@ -156,6 +171,7 @@ async function executeTransition(instance: any, duration: number, transition: Tr
       const now = Date.now()
       const alpha = ease((now - startedAt) / duration)
       setValue(instance, key, lerp(from, to, alpha))
+
       if (now < endAt)
         requestAnimationFrame(tick)
       else
@@ -168,22 +184,20 @@ async function executeTransition(instance: any, duration: number, transition: Tr
   await Promise.all(fields.map(exec))
 }
 
-async function executeInTicker(ticker: TransitionTicker | void, done: Fn, abort: Fn, ids: TransitionOptions['ids']) {
+async function executeInTicker(ticker: TransitionTicker | void, done: Fn, abort: Fn, context: TransitionOptions['context']) {
   if (!ticker)
     return
   const { duration, tick } = ticker
-  const startedAt = Date.now() - ids.time
-  const endAt = Date.now() + duration - ids.time
+  const startedAt = Date.now() - context.time
+  const endAt = Date.now() + duration - context.time
   function exec() {
     if (abort())
       return done?.()
     const now = Date.now()
 
     const progress = (now - startedAt) / duration
-    ids.time = now - startedAt
-
+    context.time = now - startedAt
     tick(progress)
-
     endAt > now
       ? requestAnimationFrame(exec)
       : done?.()
@@ -191,7 +205,7 @@ async function executeInTicker(ticker: TransitionTicker | void, done: Fn, abort:
   exec()
 }
 
-async function executeOutTicker(ticker: TransitionTicker | void, done: Fn, abort: Fn, ids: TransitionOptions['ids']) {
+async function executeOutTicker(ticker: TransitionTicker | void, done: Fn, abort: Fn, context: TransitionOptions['context']) {
   if (!ticker)
     return
   const { duration, tick } = ticker
@@ -203,7 +217,7 @@ async function executeOutTicker(ticker: TransitionTicker | void, done: Fn, abort
       return done?.()
 
     const progress = (endAt - now) / duration
-    ids.time = endAt - now
+    context.time = endAt - now
 
     tick(progress)
 
