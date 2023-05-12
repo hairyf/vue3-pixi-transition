@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { PixiTransition } from 'vue3-pixi-transition'
+import { PTransition } from 'vue3-pixi-transition'
 import { Text } from 'pixi.js'
 
 defineProps<{ show: boolean }>()
 
 function typewriter(el: Text) {
-  const speed = 1
+  const speed = 2
   const text = el.text
   const duration = text.length / (speed * 0.01)
   function tick(t: number) {
@@ -21,14 +21,14 @@ function typewriter(el: Text) {
 </script>
 
 <template>
-  <PixiTransition
+  <PTransition
     :enter="typewriter"
     :leave="typewriter"
   >
     <Text v-if="show" :position="150" :style="{ fill: '#fff' }">
       The quick brown fox jumps over the lazy dog
     </Text>
-  </PixiTransition>
+  </PTransition>
 </template>
 
 <style lang="scss" scoped></style>

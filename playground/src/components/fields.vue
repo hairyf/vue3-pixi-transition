@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { EasePresets, PixiTransition } from 'vue3-pixi-transition'
+import { EasePresets, PTransition } from 'vue3-pixi-transition'
 import type { Graphics as GraphicsIns } from 'pixi.js'
 
 defineProps<{ show: boolean }>()
@@ -8,22 +8,37 @@ function onDrawRounded(e: GraphicsIns) {
   e.beginFill('#00a3af')
   e.drawRoundedRect(0, 0, 60, 60, 10)
 }
+function easeOutElastic(n: number) {
+  return n === 0
+    ? 0
+    : n === 1
+      ? 1
+      : (2 ** (-10 * n)) * Math.sin((n * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1
+}
 </script>
 
 <template>
-  <PixiTransition
-    :duration="{ enter: 800, leave: 700 }"
-    :before-enter="{ alpha: 0, scaleX: 0.25, scaleY: 0.25 }"
-    :enter="{ ease: EasePresets.easeInOutQuart, alpha: 1, scaleX: 1, scaleY: 1 }"
-    :before-leave="{}"
+  <PTransition
+    :duration="{ enter: 600, leave: 700 }"
+    :before-enter="{
+      alpha: 0,
+      scaleX: 0.25,
+      scaleY: 0.25,
+    }"
+    :enter="{
+      ease: [.17, .67, .01, -1.42],
+      alpha: 1,
+      scaleX: 1,
+      scaleY: 1,
+    }"
     :leave="[
-      { ease: EasePresets.easeOutExpo, x: 300 },
+      { ease: easeOutElastic, x: 300 },
       { delay: 500, alpha: 0 },
     ]"
     @before-enter="() => 1231"
   >
-    <graphics v-if="show" :scale="1" :pivot="30" :x="200" :y="300" @draw="onDrawRounded" />
-  </PixiTransition>
+    <graphics v-if="show" :scale="1" :pivot="30" :x="200" :y="60" @draw="onDrawRounded" />
+  </PTransition>
 </template>
 
 <style lang="scss" scoped></style>

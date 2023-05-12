@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Container, Graphics as GraphicsIns, Text } from 'pixi.js'
 
-import { PixiTransition } from 'vue3-pixi-transition'
+import { PTransition } from 'vue3-pixi-transition'
 import gsap from 'gsap'
 import PixiPlugin from 'gsap/PixiPlugin'
 import { nextTick, ref } from 'vue'
@@ -67,7 +67,7 @@ function onDrawRounded(e: GraphicsIns) {
 </script>
 
 <template>
-  <PixiTransition
+  <PTransition
     @before-enter="onBeforeEnter"
     @enter="onEnter"
     @after-enter="onAfterEnter"
@@ -78,6 +78,6 @@ function onDrawRounded(e: GraphicsIns) {
     @leave-cancelled="onLeaveCancelled"
   >
     <graphics v-if="show" :scale="1" :pivot="30" :x="200" :y="60" @draw="onDrawRounded" />
-  </PixiTransition>
+  </PTransition>
 </template>
 
