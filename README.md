@@ -39,7 +39,7 @@ yarn add vue3-pixi-transition
 
 ```html
 <script setup lang="ts">
-import { Transition } from "vue3-pixi-transition";
+import { PixiTransition } from "vue3-pixi-transition";
 import { Container } from 'pixi.js'
 function onBeforeEnter(el: Container) {}
 function onEnter(el: Container, done: Function) {}
@@ -49,14 +49,14 @@ const show = ref(true)
 </script>
 
 <template>
-  <Transition
+  <PixiTransition
     @before-enter="onBeforeEnter"
     @enter="onEnter"
     @after-enter="onAfterEnter"
     @leave="onLeave"
   >
     <container v-if="show"><!-- pixi-element --><container>
-  </Transition>
+  </PixiTransition>
 </template>
 ```
 
@@ -68,11 +68,11 @@ Unlike the Vue Transition, you can achieve transition effects by setting differe
 
 ```html
 <script setup lang="ts">
-import { Transition } from "vue3-pixi-transition";
+import { PixiTransition } from "vue3-pixi-transition";
 </script>
 
 <template>
-  <Transition
+  <PixiTransition
     :duration="{ enter: 1000, leave: 700 }"
     :before-enter="{ alpha: 0, scaleX: 0.25, scaleY: 0.25 }"
     :enter="{ alpha: 1, scaleX: 1, scaleY: 1 }"
@@ -83,7 +83,7 @@ import { Transition } from "vue3-pixi-transition";
     ]"
   >
     <!-- ... -->
-  </Transition>
+  </PixiTransition>
 </template>
 ```
 
@@ -95,7 +95,7 @@ By default, all transition effects are linear. You can customize the transition 
 
 ```html
 <script setup lang="ts">
-import { Transition } from "vue3-pixi-transition";
+import { PixiTransition } from "vue3-pixi-transition";
 function easeOutElastic(n: number) {
   return  n === 0
     ? 0 : n === 1
@@ -106,13 +106,13 @@ function easeOutElastic(n: number) {
 </script>
 
 <template>
-  <Transition
+  <PixiTransition
     :before-enter="{ x: -50 }"
     :enter="{ ease: [.42, 0, 1, 1], x: 0 }"
     :level="{ ease: easeOutElastic, x: -50 }"
   >
     <!-- ... -->
-  </Transition>
+  </PixiTransition>
 </template>
 ```
 
@@ -140,9 +140,9 @@ function typewriter(el: Text) {
 </script>
 
 <template>
-  <Transition :enter="typewriter" :level="typewriter">
+  <PixiTransition :enter="typewriter" :level="typewriter">
     <Text>...</Text>
-  </Transition>
+  </PixiTransition>
 </template>
 ```
 

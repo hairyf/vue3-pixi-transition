@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import { Container, Text } from 'pixi.js'
-import type { Graphics as GraphicsIns } from 'pixi.js'
-import { Transition } from 'vue3-pixi-transition'
+import type { Container, Graphics as GraphicsIns, Text } from 'pixi.js'
+
+import { PixiTransition } from 'vue3-pixi-transition'
 import gsap from 'gsap'
 import PixiPlugin from 'gsap/PixiPlugin'
 import { nextTick, ref } from 'vue'
 import * as PIXI from 'pixi.js'
 
+defineProps<{ show: boolean }>()
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI(PIXI)
 
-// 在元素被插入到 DOM 之前被调用
-// 用这个来设置元素的 "enter-from" 状态
 async function onBeforeEnter(el: Text) {
   await nextTick()
   gsap.set(el, {
@@ -35,13 +34,6 @@ function onEnter(el: Container, done: () => void) {
       scaleY: 1,
     },
   })
-
-  return {
-    duration: 1000,
-    tick: (t: any) => {
-
-    },
-  }
 }
 function onAfterEnter(el: Container) {}
 function onEnterCancelled(el: Container) {}
@@ -72,28 +64,20 @@ function onDrawRounded(e: GraphicsIns) {
   e.beginFill('#00a3af')
   e.drawRoundedRect(0, 0, 60, 60, 10)
 }
-
-const show = ref(true)
 </script>
 
 <template>
-  <Container>
-    <Text :position="60" :style="{ fill: '#fff' }" @click="show = !show">
-      Toggle
-    </Text>
-    <Transition
-      :css="false"
-      @before-enter="onBeforeEnter"
-      @enter="onEnter"
-      @after-enter="onAfterEnter"
-      @enter-cancelled="onEnterCancelled"
-      @before-leave="onBeforeLeave"
-      @leave="onLeave"
-      @after-leave="onAfterLeave"
-      @leave-cancelled="onLeaveCancelled"
-    >
-      <graphics v-if="show" :scale="1" :pivot="30" :x="200" :y="60" @draw="onDrawRounded" />
-    </Transition>
-  </Container>
+  <PixiTransition
+    @before-enter="onBeforeEnter"
+    @enter="onEnter"
+    @after-enter="onAfterEnter"
+    @enter-cancelled="onEnterCancelled"
+    @before-leave="onBeforeLeave"
+    @leave="onLeave"
+    @after-leave="onAfterLeave"
+    @leave-cancelled="onLeaveCancelled"
+  >
+    <graphics v-if="show" :scale="1" :pivot="30" :x="200" :y="60" @draw="onDrawRounded" />
+  </PixiTransition>
 </template>
 

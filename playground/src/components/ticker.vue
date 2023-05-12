@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { Transition as Tn } from 'vue3-pixi-transition'
+import { PixiTransition } from 'vue3-pixi-transition'
 import { Text } from 'pixi.js'
+
+defineProps<{ show: boolean }>()
 
 function typewriter(el: Text) {
   const speed = 1
@@ -16,23 +18,17 @@ function typewriter(el: Text) {
     tick,
   }
 }
-const show = ref(true)
 </script>
 
 <template>
-  <Text :position="60" :style="{ fill: '#fff' }" @click="show = !show">
-    Toggle
-  </Text>
-
-  <Tn
-    :appear="true"
+  <PixiTransition
     :enter="typewriter"
     :leave="typewriter"
   >
     <Text v-if="show" :position="150" :style="{ fill: '#fff' }">
       The quick brown fox jumps over the lazy dog
     </Text>
-  </Tn>
+  </PixiTransition>
 </template>
 
 <style lang="scss" scoped></style>

@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useWindowSize } from '@vueuse/core'
-
-import BasicTransition from './components/BasicTransition.vue'
-import FieldTransition from './components/FieldTransition.vue'
-import TickerTransition from './components/TickerTransition.vue'
+import Basic from './components/basic.vue'
+import Fields from './components/fields.vue'
+import Ticker from './components/ticker.vue'
 
 const enabled = ref(true)
 
@@ -17,16 +16,16 @@ const { width, height } = useWindowSize()
       <button @click="enabled = !enabled">
         Toggle
       </button>
-      <span style="margin-left: 10px"> Sprite visible: {{ enabled }} </span>
+      <span style="margin-left: 10px"> visible: {{ enabled }} </span>
     </p>
     <Stage
       :style="{ width: `${width / 2}px` }"
       :width="width - 80"
       :height="height"
     >
-      <template v-if="enabled">
-        <TickerTransition />
-      </template>
+      <Basic :show="enabled" />
+      <Fields :show="enabled" />
+      <Ticker :show="enabled" />
     </Stage>
   </div>
 </template>
