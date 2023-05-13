@@ -204,10 +204,6 @@ You can also control the transition effects of filters by setting `before-enter`
 ```html
 <script setup lang="ts">
 import { PTransition } from "vue3-pixi-transition";
-import { Container, Sprite } from 'pixi.js'
-function onBeforeEnter(el: Container) {}
-function onEnter(el: Container, done: Function) {}
-function onLeave(el: Container, done: Function) {}
 // ....
 const show = ref(true)
 </script>
