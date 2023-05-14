@@ -1,5 +1,5 @@
 import type { ExtractPropTypes, PropType } from 'vue-demi'
-import { BaseTransition, defineComponent, h, reactive } from 'vue-demi'
+import { BaseTransition, defineComponent, h } from 'vue-demi'
 
 import type { Fn, Hook, TransitionTicker } from '../types'
 
@@ -30,8 +30,7 @@ export const PTransition = defineComponent({
   name: 'PTransition',
   props: transitionProps,
   setup(props, { slots }) {
-    const context = reactive({ id: 0, time: 0 })
-    const rowProps = resolveTransitionProps(props, context)
+    const rowProps = resolveTransitionProps(props, { id: 0, time: 0 })
     return () => h(BaseTransition, rowProps, slots)
   },
 })
@@ -41,7 +40,7 @@ export function resolveTransitionProps(props: TransitionProps, context?: any) {
     callSetterHook(el, props, 'beforeEnter')
   }
   function onEnter(el: any, done: Fn) {
-    callAnimationHook(el, props, 'enter', { done, context })
+    callAnimationHook(el, props, 'enter', done, context)
   }
   function onAfterEnter(el: any) {
     callSetterHook(el, props, 'afterEnter')
@@ -53,7 +52,7 @@ export function resolveTransitionProps(props: TransitionProps, context?: any) {
     callSetterHook(el, props, 'beforeLeave')
   }
   async function onLeave(el: any, done: Fn) {
-    callAnimationHook(el, props, 'leave', { done, context })
+    callAnimationHook(el, props, 'leave', done, context)
   }
   function onAfterLeave(el: any) {
     callSetterHook(el, props, 'afterLeave')

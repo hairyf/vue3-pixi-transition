@@ -1,4 +1,5 @@
-import { isObject } from '@antfu/utils'
+/* eslint-disable max-statements-per-line */
+import type { Fn } from '@antfu/utils'
 import { camelize } from 'vue-demi'
 
 export function delay(ms: number) {
@@ -12,6 +13,12 @@ export function linear(p: number) {
 export function lerp(a: number, b: number, alpha: number) {
   return a + alpha * (b - a)
 }
+
+export function ignore(fn: Fn<any>) {
+  try { return fn() }
+  catch {}
+}
+
 export type Deferred<T = void> = Promise<T> & { resolve: (value: T) => void; reject: Function }
 
 export function createDeferred<T = void>(): Deferred<T> {
@@ -34,17 +41,3 @@ export function resolveProps<T>(props: T) {
   return baseProps as T
 }
 
-export function normalizeDuration(
-  duration: number | { enter: number; leave: number },
-): null | Record<string, number> {
-  if (duration == null) {
-    return null
-  }
-  else if (isObject(duration)) {
-    return duration
-  }
-  else {
-    const n = Number(duration)
-    return { enter: n, leave: n }
-  }
-}

@@ -27,10 +27,8 @@ export const PTransitionGroup = defineComponent({
         return
       contexts[key] ??= { id: 0, time: 0 }
       const rowProps = resolveTransitionProps(props, contexts[key])
-      setTransitionHooks(
-        child,
-        resolveTransitionHooks(child, rowProps, state, instance),
-      )
+      const transitionHooks = resolveTransitionHooks(child, rowProps, state, instance)
+      setTransitionHooks(child, transitionHooks)
     }
     return () => {
       prevChildren = children
