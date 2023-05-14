@@ -1,4 +1,5 @@
-import { isFunction, noop, toArray } from '@antfu/utils'
+import { isFunction, isObject, isUndefined, noop, toArray } from '@antfu/utils'
+import { Ticker } from 'pixi.js'
 import type { Container } from 'pixi.js'
 import type { Fn, TransitionTicker, TransitionVars } from '../types'
 import {
@@ -6,9 +7,9 @@ import {
   createEasingFunction,
   delay,
   getValue,
+  ignore,
   lerp,
   linear,
-  normalizeDuration,
   setProps,
   setValue,
 } from '../utils'
@@ -21,6 +22,7 @@ export interface TransitionOptions {
 export async function callSetterHook(instance: any, props: any, name: string) {
   const eventName = `on${name[0].toLocaleUpperCase()}${name.slice(1)}`
   const hook = props[name] || props[eventName]
+  const filters = instance.filters || []
 
   if (!hook)
     return
@@ -28,27 +30,21 @@ export async function callSetterHook(instance: any, props: any, name: string) {
     hook(instance)
     return
   }
-  for (const filter of instance.filters || [])
-    callSetterHook(filter, filter, name)
+
+  filters.forEach((filter: any) => callSetterHook(filter, filter, name))
   setProps(instance, toArray(hook))
 }
 
-export async function callAnimationHook(instance: any, props: any, name: string, options: TransitionOptions) {
+export async function callAnimationHook(instance: any, props: any, name: string, done: Fn, context?: any) {
   const eventName = `on${name[0].toLocaleUpperCase()}${name.slice(1)}`
   const hook = props[name] || props[eventName]
-
-  for (const filter of instance.filters || []) {
-    filter._v_transition_context ??= { id: 0, time: 0 }
-    callAnimationHook(filter, filter, name, {
-      context: filter._v_transition_context,
-      done: noop,
-    })
-  }
+  for (const filter of instance.filters || [])
+    callAnimationHook(filter, filter, name, noop)
 
   if (!hook)
     return
 
-  const { done, context } = options
+  context = context || (instance._v_t_context ??= { id: 0, time: 0 })
   const id = ++context.id
   const abort = () => id !== context.id
 
@@ -60,15 +56,15 @@ export async function callAnimationHook(instance: any, props: any, name: string,
 
   const transitions = toArray(hook).filter(Boolean)
 
-  await Promise.all(transitions.map((transition) => {
-    const duration = normalizeDuration(props.duration || transition.duration)?.[name] ?? 1000
+  const proceedings = transitions.map((transition) => {
+    const duration = props.duration || transition.duration
     return executeTransition(
-      instance,
-      duration,
-      transition,
-      abort,
+      instance, normalize(duration)?.[name] ?? 1000,
+      transition, abort,
     )
-  }))
+  })
+
+  await Promise.all(proceedings)
 
   done()
 }
@@ -85,24 +81,26 @@ async function executeTransition(instance: Container, duration: number, transiti
   const ease = !isFunction(transition.ease)
     ? createEasingFunction(transition.ease)
     : transition.ease
+
   function exec(key: string) {
     const from = getValue(instance, key)
-    const to = transition[key]
+    const to = Number(transition[key])
     const deferred = createDeferred<void>()
+    if (isNaN(to) || isUndefined(from))
+      throw new Error(`Transition - {${key}} not valid field`)
+
     function tick() {
       if (abort?.())
         return deferred.resolve()
 
       const now = Date.now()
       const alpha = ease((now - startedAt) / duration)
-      setValue(instance, key, lerp(from, to, alpha))
-
-      if (now < endAt)
-        requestAnimationFrame(tick)
-      else
+      ignore(() => setValue(instance, key, lerp(from, to, alpha)))
+      if (now > endAt)
         deferred.resolve()
     }
-    tick()
+    Ticker.shared.add(tick)
+    deferred.then(() => Ticker.shared.remove(tick))
     return deferred
   }
 
@@ -115,19 +113,23 @@ async function executeInTicker(ticker: TransitionTicker | void, done: Fn, abort:
   const { duration, tick } = ticker
   const startedAt = Date.now() - context.time
   const endAt = Date.now() + duration - context.time
+  const deferred = createDeferred<void>()
   function exec() {
     if (abort())
-      return done?.()
+      return deferred.resolve()
     const now = Date.now()
-
     const progress = (now - startedAt) / duration
     context.time = now - startedAt
     tick(progress)
     endAt > now
       ? requestAnimationFrame(exec)
-      : done?.()
+      : deferred.resolve()
   }
   exec()
+  Ticker.shared.add(exec)
+  deferred.then(() => Ticker.shared.remove(exec))
+  deferred.then(() => done())
+  return deferred
 }
 
 async function executeOutTicker(ticker: TransitionTicker | void, done: Fn, abort: Fn, context: TransitionOptions['context']) {
@@ -135,21 +137,35 @@ async function executeOutTicker(ticker: TransitionTicker | void, done: Fn, abort
     return
   const { duration, tick } = ticker
   const endAt = Date.now() + duration
+  const deferred = createDeferred<void>()
   function exec() {
-    const now = Date.now()
-
     if (abort?.())
-      return done?.()
-
+      return deferred.resolve()
+    const now = Date.now()
     const progress = (endAt - now) / duration
     context.time = endAt - now
-
     tick(progress)
-
     endAt > now
       ? requestAnimationFrame(exec)
-      : done?.()
+      : deferred.resolve()
   }
-  exec()
+  Ticker.shared.add(exec)
+  deferred.then(() => Ticker.shared.remove(exec))
+  deferred.then(() => done())
+  return deferred
 }
 
+export function normalize(
+  duration: number | { enter: number; leave: number },
+): null | Record<string, number> {
+  if (duration == null) {
+    return null
+  }
+  else if (isObject(duration)) {
+    return duration
+  }
+  else {
+    const n = Number(duration)
+    return { enter: n, leave: n }
+  }
+}
