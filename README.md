@@ -1,3 +1,12 @@
+🚛 This package is now part of vue3-pixi@0.6.4.
+
+👉 Refer to https://github.com/hairyf/vue3-pixi/tree/main/packages/transition instead.
+
+----
+
+<details>
+  <summary>Legacy README</summary>
+  
 <h1 align="center">Vue 3 Pixi Transition</h1>
 
 <p align="center">
@@ -254,7 +263,8 @@ const show = ref(true)
   </PTransitionGroup>
 </template>
 ```
-
+</details>
+    
 ## License
 
 [MIT](./LICENSE) License © 2022-PRESENT [hairyf](https://github.com/hairyf)
