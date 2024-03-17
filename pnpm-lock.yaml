@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -51,8 +55,8 @@ importers:
         specifier: ^3.2.47
         version: 3.2.47
       vue3-pixi-renderer:
-        specifier: ^0.5.7
-        version: 0.5.7(@pixi/utils@7.2.4)(vue@3.2.47)
+        specifier: ^0.6.0
+        version: 0.6.3(@pixi/utils@7.2.4)(vue@3.2.47)
       vue3-pixi-transition:
         specifier: workspace:^
         version: link:..
@@ -4645,8 +4649,9 @@ packages:
       - supports-color
     dev: true
 
-  /vue3-pixi-renderer@0.5.7(@pixi/utils@7.2.4)(vue@3.2.47):
-    resolution: {integrity: sha512-P0UIxxef3hRHUKGPWnY9al7Trqt15HkHPf084nhBXvfem2oErn0hq1hSG4cmn2+++d1jdsf82L9+aIt/zXIung==}
+  /vue3-pixi-renderer@0.6.3(@pixi/utils@7.2.4)(vue@3.2.47):
+    resolution: {integrity: sha512-c1aPXkzKxZS5Ry1HqoJHNurYdXGFhoSTt65T+ckdgpf1J6HiEosoPpAEM79+jGLu51traK0MtvXhCIHmEdQFqA==}
+    deprecated: 'please use vue3-pixi: https://github.com/hairyf/vue3-pixi'
     dependencies:
       '@antfu/utils': 0.7.2
       '@vueuse/core': 10.1.2(vue@3.2.47)
